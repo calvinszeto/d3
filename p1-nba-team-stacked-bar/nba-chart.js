@@ -1,7 +1,7 @@
 // Used for setting width/height of chart
-var margin = {top: 20, right: 20, bottom: 30, left: 40},
-width = 960 - margin.left - margin.right,
-height = 500 - margin.top - margin.bottom;
+var margin = {top: 00, right: 100, bottom: 200, left: 100},
+width = 1600 - margin.left - margin.right,
+height = 1024 - margin.top - margin.bottom;
 
 // https://github.com/mbostock/d3/wiki/Ordinal-Scales
 // Set the scale for the x axis
@@ -52,10 +52,20 @@ d3.csv("data/nba_team_index.csv", function(error, data) {
 	x.domain(data.map(function(d) { return d.Franchise; }));
 	y.domain([0, d3.max(data, function(d) { return d.total; })]);
 
+	// X Axis
 	svg.append("g")
 	.attr("class", "x axis")
 	.attr("transform", "translate(0," + height + ")")
-	.call(xAxis);
+	.call(xAxis)
+	.selectAll("text")  
+		.style("text-anchor", "end")
+		.attr("dx", "-.8em")
+		.attr("dy", ".65em")
+		.style("font-family", "Arial")
+		.style("font-size", "12px")
+		.attr("transform", function(d) {
+			return "rotate(-45)" 
+		});
 
 	svg.append("g")
 	.attr("class", "y axis")
