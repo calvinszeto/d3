@@ -57,3 +57,16 @@ After copying over the code and tinkering with it a bit, I have slightly
 more legible labels. After a font-size change and making the graph a lot
 bigger, I am pretty satisfied. Further, changing the size of the graph
 also solved issue 3!
+
+For the second issue, I have a decision to make. Should I distinguish
+between different franchises with the same name? If I do, that means
+adding more text to the already-hard-to-read labels. Do I just allow
+them to consolidate? If so, then I have to aggregate the wins/losses
+before graphing them.
+
+A lot of the different franchise/same name occurences are due to the
+NBA/ABA merge; others I'm not so sure about. In any case, I decide to
+consolidate same-name franchises, since it's usually really the same
+franchise. I do this with some Javascript array manipulation. 
+My implementation is inefficient, but since the data source is small, 
+I stick with its simplicity.

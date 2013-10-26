@@ -37,17 +37,30 @@ var svg = d3.select("body").append("svg")
 
 // Grab the data
 d3.csv("data/nba_team_index.csv", function(error, data) {
-	// Associate colors with the W and L columns
+	// Combine data points for the same Franchise
+	data.forEach(function(d) {
+		data.filter(function(e) {
+			return e.Franchise == d.Franchise && e != d;
+		}).forEach(function(f) {
+			d.W = parseInt(d.W) + parseInt(f.W);
+			d.L = parseInt(d.L) + parseInt(f.L);
+			data.splice(data.indexOf(f), 1);
+		});
+	});
+
 	color.domain(d3.keys(data[0]).filter(function(key) { return key == "W" || key == "L"; }));
 
-	// What's happening here?
+	// Calculate the y-values for wins/losses/total
 	data.forEach(function(d) {
 		var y0 = 0;
-		d.ages = color.domain().map(function(name) { return {name: name, y0: y0, y1: y0 += +d[name]}; });
-		d.total = d.ages[d.ages.length - 1].y1;
+		d.record = color.domain().map(function(name) { return {name: name, y0: y0, y1: y0 += +d[name]}; });
+		d.total = d.record[d.record.length - 1].y1;
 	});
 
 	data.sort(function(a, b) { return b.total - a.total; });
+	data.forEach(function(d) {
+		console.log(d.Franchise + " " + d.total);
+	});
 
 	x.domain(data.map(function(d) { return d.Franchise; }));
 	y.domain([0, d3.max(data, function(d) { return d.total; })]);
@@ -77,6 +90,7 @@ d3.csv("data/nba_team_index.csv", function(error, data) {
 	.style("text-anchor", "end")
 	.text("Games");
 
+	// What is this?
 	var franchise = svg.selectAll(".franchise")
 	.data(data)
 	.enter().append("g")
@@ -84,7 +98,7 @@ d3.csv("data/nba_team_index.csv", function(error, data) {
 	.attr("transform", function(d) { return "translate(" + x(d.Franchise) + ",0)"; });
 
 	franchise.selectAll("rect")
-	.data(function(d) { return d.ages; })
+	.data(function(d) { return d.record; })
 	.enter().append("rect")
 	.attr("width", x.rangeBand())
 	.attr("y", function(d) { return y(d.y1); })
